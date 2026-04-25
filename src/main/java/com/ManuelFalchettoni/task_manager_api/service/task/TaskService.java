@@ -22,8 +22,16 @@ public class TaskService {
         return TaskMapper.taskToResponse(savedTask);
     }
 
+    private Task findTask(Long id){
+        return jpaTaskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
+    }
     public TaskResponse find(Long id){
-        Task task = jpaTaskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
-        return TaskMapper.taskToResponse(task);
+        return TaskMapper.taskToResponse(findTask(id));
+    }
+
+    public TaskResponse update(Long id, TaskRequest request){
+        Task task = TaskMapper.updateTaskFromRequest(findTask(id), request);
+        Task save = jpaTaskRepository.save(task);
+        return TaskMapper.taskToResponse(save);
     }
 }

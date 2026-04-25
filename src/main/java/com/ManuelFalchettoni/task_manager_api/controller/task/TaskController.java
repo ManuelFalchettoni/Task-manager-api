@@ -2,12 +2,8 @@ package com.ManuelFalchettoni.task_manager_api.controller.task;
 
 import com.ManuelFalchettoni.task_manager_api.dto.request.TaskRequest;
 import com.ManuelFalchettoni.task_manager_api.dto.response.TaskResponse;
-import com.ManuelFalchettoni.task_manager_api.entity.task.Task;
-import com.ManuelFalchettoni.task_manager_api.mapper.TaskMapper;
-import com.ManuelFalchettoni.task_manager_api.repository.task.JpaTaskRepository;
 import com.ManuelFalchettoni.task_manager_api.service.task.TaskService;
 import jakarta.validation.Valid;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +26,12 @@ public class TaskController {
     @GetMapping("/{id}")
     public ResponseEntity<TaskResponse> find(@PathVariable Long id){
         TaskResponse response = taskService.find(id);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<TaskResponse> update(@PathVariable Long id, @Valid @RequestBody TaskRequest request){
+        TaskResponse response = taskService.update(id, request);
         return ResponseEntity.ok(response);
     }
 }

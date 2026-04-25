@@ -17,4 +17,17 @@ public class TaskMapper {
         task.setState(taskRequest.getState());
         return task;
     }
+
+    public static Task updateTaskFromRequest(Task task, TaskRequest request){
+        if (request.getTitle() != null) {
+            task.setTitle(request.getTitle());
+        }
+        if (request.getDescription() != null) {
+            task.setDescription(request.getDescription());
+        }
+        if (request.getState() != null) {
+            task.setState(request.getState());
+        }
+        return task;
+    }
 }
