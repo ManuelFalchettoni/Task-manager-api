@@ -34,4 +34,9 @@ public class TaskService {
         Task save = jpaTaskRepository.save(task);
         return TaskMapper.taskToResponse(save);
     }
+
+    public void delete(Long id){
+        findTask(id);
+        jpaTaskRepository.deleteById(id);
+    }
 }
