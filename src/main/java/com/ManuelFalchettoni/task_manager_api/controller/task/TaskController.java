@@ -4,6 +4,8 @@ import com.ManuelFalchettoni.task_manager_api.dto.request.TaskRequest;
 import com.ManuelFalchettoni.task_manager_api.dto.response.TaskResponse;
 import com.ManuelFalchettoni.task_manager_api.service.task.TaskService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,5 +41,11 @@ public class TaskController {
     public ResponseEntity<Void> delete(@PathVariable Long id){
         taskService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<TaskResponse>> findAll(Pageable pageable){
+        Page<TaskResponse>  responses= taskService.findAll(pageable);
+        return ResponseEntity.ok(responses);
     }
 }

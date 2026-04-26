@@ -6,6 +6,8 @@ import com.ManuelFalchettoni.task_manager_api.entity.task.Task;
 import com.ManuelFalchettoni.task_manager_api.exception.task.TaskNotFoundException;
 import com.ManuelFalchettoni.task_manager_api.mapper.TaskMapper;
 import com.ManuelFalchettoni.task_manager_api.repository.task.JpaTaskRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,6 +29,11 @@ public class TaskService {
     }
     public TaskResponse find(Long id){
         return TaskMapper.taskToResponse(findTask(id));
+    }
+
+    public Page<TaskResponse> findAll(Pageable pageable){
+        Page<Task> taskPage = jpaTaskRepository.findAll(pageable);
+        return taskPage.map(TaskMapper::taskToResponse);
     }
 
     public TaskResponse update(Long id, TaskRequest request){
