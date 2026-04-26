@@ -22,9 +22,18 @@ public class TaskResponse {
     }
 
     //Getters
+    public Long getId(){return this.id;}
     public void setId(Long id){this.id = id;}
+
+    public String getTitle(){return this.title;}
     public void setTitle(String title){this.title = title;}
+
+    public String getDescription(){return this.description;}
     public void setDescription(String description){this.description = description;}
+
+    public TaskStatus getState(){return this.state;}
     public void setState(TaskStatus state){this.state = state;}
+
+    public LocalDateTime getCreationDate(){return this.creationDate;}
     public void setCreationDate(LocalDateTime creationDate){this.creationDate = creationDate;}
 }
