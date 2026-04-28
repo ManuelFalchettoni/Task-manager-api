@@ -1,11 +1,13 @@
 package com.ManuelFalchettoni.task_manager_api.service.task;
 
-import com.ManuelFalchettoni.task_manager_api.dto.request.TaskRequest;
+import com.ManuelFalchettoni.task_manager_api.dto.request.task.TaskCreateRequest;
+import com.ManuelFalchettoni.task_manager_api.dto.request.task.TaskUpdateRequest;
 import com.ManuelFalchettoni.task_manager_api.dto.response.TaskResponse;
 import com.ManuelFalchettoni.task_manager_api.entity.task.Task;
 import com.ManuelFalchettoni.task_manager_api.exception.task.TaskNotFoundException;
 import com.ManuelFalchettoni.task_manager_api.mapper.TaskMapper;
 import com.ManuelFalchettoni.task_manager_api.repository.task.JpaTaskRepository;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,7 +20,7 @@ public class TaskService {
         this.jpaTaskRepository = jpaTaskRepository;
     }
 
-    public TaskResponse create(TaskRequest taskRequest){
+    public TaskResponse create(TaskCreateRequest taskRequest){
         Task task = TaskMapper.requestToTask(taskRequest);
         Task savedTask = jpaTaskRepository.save(task);
         return TaskMapper.taskToResponse(savedTask);
@@ -36,7 +38,7 @@ public class TaskService {
         return taskPage.map(TaskMapper::taskToResponse);
     }
 
-    public TaskResponse update(Long id, TaskRequest request){
+    public TaskResponse update(Long id, TaskUpdateRequest request){
         Task task = TaskMapper.updateTaskFromRequest(findTask(id), request);
         Task save = jpaTaskRepository.save(task);
         return TaskMapper.taskToResponse(save);

@@ -1,6 +1,7 @@
 package com.ManuelFalchettoni.task_manager_api.controller.task;
 
-import com.ManuelFalchettoni.task_manager_api.dto.request.TaskRequest;
+import com.ManuelFalchettoni.task_manager_api.dto.request.task.TaskCreateRequest;
+import com.ManuelFalchettoni.task_manager_api.dto.request.task.TaskUpdateRequest;
 import com.ManuelFalchettoni.task_manager_api.dto.response.TaskResponse;
 import com.ManuelFalchettoni.task_manager_api.service.task.TaskService;
 import jakarta.validation.Valid;
@@ -20,7 +21,7 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<TaskResponse> create(@Valid @RequestBody TaskRequest taskRequest) {
+    public ResponseEntity<TaskResponse> create(@Valid @RequestBody TaskCreateRequest taskRequest) {
         TaskResponse response = taskService.create(taskRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -32,7 +33,7 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TaskResponse> update(@PathVariable Long id, @Valid @RequestBody TaskRequest request){
+    public ResponseEntity<TaskResponse> update(@PathVariable Long id, @Valid @RequestBody TaskUpdateRequest request){
         TaskResponse response = taskService.update(id, request);
         return ResponseEntity.ok(response);
     }

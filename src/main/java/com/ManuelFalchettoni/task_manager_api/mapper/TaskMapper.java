@@ -1,6 +1,7 @@
 package com.ManuelFalchettoni.task_manager_api.mapper;
 
-import com.ManuelFalchettoni.task_manager_api.dto.request.TaskRequest;
+import com.ManuelFalchettoni.task_manager_api.dto.request.task.TaskCreateRequest;
+import com.ManuelFalchettoni.task_manager_api.dto.request.task.TaskUpdateRequest;
 import com.ManuelFalchettoni.task_manager_api.dto.response.TaskResponse;
 import com.ManuelFalchettoni.task_manager_api.entity.task.Task;
 
@@ -10,15 +11,14 @@ public class TaskMapper {
         return new TaskResponse (task.getId(), task.getTitle(), task.getDescription(), task.getState(), task.getCreationDate());
     }
 
-    public static Task requestToTask(TaskRequest taskRequest){
+    public static Task requestToTask(TaskCreateRequest taskRequest){
         Task task = new Task();
         task.setTitle(taskRequest.getTitle());
         task.setDescription(taskRequest.getDescription());
-        task.setState(taskRequest.getState());
         return task;
     }
 
-    public static Task updateTaskFromRequest(Task task, TaskRequest request){
+    public static Task updateTaskFromRequest(Task task, TaskUpdateRequest request){
         if (request.getTitle() != null) {
             task.setTitle(request.getTitle());
         }
