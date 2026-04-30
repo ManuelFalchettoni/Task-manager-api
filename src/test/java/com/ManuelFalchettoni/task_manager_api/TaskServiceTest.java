@@ -21,7 +21,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class TaskServiceTest {
@@ -94,7 +94,6 @@ public class TaskServiceTest {
         Task task = new Task("Titulo", "Description");
         ReflectionTestUtils.setField(task, "id", 1L);
 
-
         when(jpaTaskRepository.findById(1L)).thenReturn(Optional.of(task));
         when(jpaTaskRepository.save(any(Task.class))).thenReturn(task);
 
@@ -118,6 +117,31 @@ public class TaskServiceTest {
         });
 
         assertEquals("Task not found with id: " + 1L, exception.getMessage());
-
     }
+
+    @Test
+    void delete_ShouldDeleteTask_WhenIdExists(){
+        Long taskId = 1L;
+        Task task = new Task();
+        ReflectionTestUtils.setField(task, "id", taskId);
+
+        when(jpaTaskRepository.findById(taskId)).thenReturn(Optional.of(task));
+
+        taskService.delete(taskId);
+
+        verify(jpaTaskRepository, times(1)).deleteById(taskId);
+    }
+
+    @Test
+    void delete_ShouldThrowException_WhenTaskNotFound(){
+        Long taskId = 1L;
+
+        when(jpaTaskRepository.findById(taskId)).thenReturn(Optional.empty());
+
+        TaskNotFoundException exception = assertThrows(TaskNotFoundException.class, () ->{
+            taskService.delete(taskId);
+        });
+        assertEquals("Task not found with id: " + taskId, exception.getMessage());
+    }
+
 }
