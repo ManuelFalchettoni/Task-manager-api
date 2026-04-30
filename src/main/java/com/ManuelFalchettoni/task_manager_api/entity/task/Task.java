@@ -22,7 +22,7 @@ public class Task {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    private TaskStatus state;
+    private TaskStatus state = TaskStatus.PENDING;
 
     @CreationTimestamp
     @Column(updatable = false)
@@ -30,10 +30,9 @@ public class Task {
 
     public Task(){}//Empty for the ORM
 
-    public Task(String title, String description, TaskStatus state){
+    public Task(String title, String description){
         this.title = title;
         this.description= description;
-        this.state = state;
     }
 
     @PrePersist
