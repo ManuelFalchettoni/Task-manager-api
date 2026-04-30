@@ -14,9 +14,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import java.util.Locale;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -103,6 +106,7 @@ public class TaskServiceTest {
         assertEquals(1L, response.getId());
         assertEquals("Title", response.getTitle());
         assertEquals("Description 2", response.getDescription());
+        assertEquals(TaskStatus.IN_PROGRESS, response.getState());
     }
 
     @Test
@@ -142,6 +146,30 @@ public class TaskServiceTest {
             taskService.delete(taskId);
         });
         assertEquals("Task not found with id: " + taskId, exception.getMessage());
+    }
+
+    @Test
+    void findAll_ShouldReturnPage(){
+
+        Task task1 = new Task("First Task", "First Description");
+        Task task2 = new Task("Second Task", "Second Description");
+        ReflectionTestUtils.setField(task1,"id", 1L);
+        ReflectionTestUtils.setField(task2,"id", 2L);
+        List<Task> taskList = List.of(task1,task2);
+
+        Pageable pageable = PageRequest.of(0,10);
+        Page<Task> taskPage = new PageImpl<>(taskList,pageable,taskList.size());
+
+        when(jpaTaskRepository.findAll(pageable)).thenReturn(taskPage);
+
+        Page<TaskResponse> response = taskService.findAll(pageable);
+
+        assertNotNull(response);
+        assertEquals(2, response.getContent().size());//Extract and count the list
+        assertEquals("First Task",response.getContent().get(0).getTitle()); //extract content of the first element and get the title
+
+        verify(jpaTaskRepository).findAll(pageable);
+
     }
 
 }
