@@ -35,20 +35,17 @@ public class TaskServiceTest {
 
     @Test
     void create_ShouldReturnTaskResponse_WhenValidRequest(){
-        // GIVEN (Preparación)
         TaskCreateRequest request = new TaskCreateRequest(
                 "Titulo",
                 "Description"
         );
-        // when -> thenReturn
+
         Task task = TaskMapper.requestToTask(request);
         ReflectionTestUtils.setField(task, "id", 1L);
         when(jpaTaskRepository.save(any(Task.class))).thenReturn(task);
 
-        // WHEN (Acción)
         TaskResponse response = taskService.create(request);
 
-        // THEN
         assertNotNull(response);
         assertEquals(1L, response.getId());
         assertEquals("Titulo", response.getTitle());
@@ -65,10 +62,8 @@ public class TaskServiceTest {
         ReflectionTestUtils.setField(task, "id", 1L);
         when(jpaTaskRepository.findById(1L)).thenReturn(Optional.of(task));
 
-        //When
         TaskResponse response = taskService.find(1L);
 
-        //Then
         assertNotNull(response);
         assertEquals(1L, response.getId());
         assertEquals("Titulo", response.getTitle());
@@ -78,10 +73,10 @@ public class TaskServiceTest {
 
     @Test
     void find_ShouldThrowException_WhenInvalidID(){
-        // GIVEN: Set up the mock to return an empty box (Optional.empty)
+        // Set up the mock to return an empty box (Optional.empty)
         when(jpaTaskRepository.findById(1L)).thenReturn(Optional.empty()); //
 
-        // WHEN & THEN: Assert that the exception is thrown
+        // Assert that the exception is thrown
         TaskNotFoundException exception = assertThrows(TaskNotFoundException.class, () ->{
             taskService.find(1L);
         });
@@ -91,7 +86,6 @@ public class TaskServiceTest {
 
     @Test
     void update_ShouldReturnTask_WhenValidRequest(){
-        // GIVEN
         TaskUpdateRequest request = new TaskUpdateRequest("Title", "Description 2", TaskStatus.IN_PROGRESS);
 
         Task task = new Task("Titulo", "Description");
@@ -111,11 +105,9 @@ public class TaskServiceTest {
 
     @Test
     void update_ShouldThrowException_WhenTaskNotFound(){
-        // GIVEN
         TaskUpdateRequest request = new TaskUpdateRequest("Title", "Description 2", TaskStatus.IN_PROGRESS);
         when(jpaTaskRepository.findById(1L)).thenReturn(Optional.empty());
 
-        // WHEN & THEN: Assert that the exception is thrown
         TaskNotFoundException exception = assertThrows(TaskNotFoundException.class, () ->{
             taskService.update(1L,request);
         });
