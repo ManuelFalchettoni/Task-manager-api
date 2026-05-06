@@ -34,7 +34,7 @@ public class TaskServiceTest {
     TaskService taskService;
 
     @Test
-    void create_ShouldReturnTaskResponse_WhenValidRequest(){
+    void create_ShouldReturnTask_WhenValidRequest(){
         TaskCreateRequest request = new TaskCreateRequest(
                 "Titulo",
                 "Description"
@@ -44,7 +44,7 @@ public class TaskServiceTest {
         ReflectionTestUtils.setField(task, "id", 1L);
         when(jpaTaskRepository.save(any(Task.class))).thenReturn(task);
 
-        TaskResponse response = taskService.create(request);
+        Task response = taskService.create(request);
 
         assertNotNull(response);
         assertEquals(1L, response.getId());
@@ -62,7 +62,7 @@ public class TaskServiceTest {
         ReflectionTestUtils.setField(task, "id", 1L);
         when(jpaTaskRepository.findById(1L)).thenReturn(Optional.of(task));
 
-        TaskResponse response = taskService.find(1L);
+        Task response = taskService.findTask(1L);
 
         assertNotNull(response);
         assertEquals(1L, response.getId());
@@ -78,7 +78,7 @@ public class TaskServiceTest {
 
         // Assert that the exception is thrown
         TaskNotFoundException exception = assertThrows(TaskNotFoundException.class, () ->{
-            taskService.find(1L);
+            taskService.findTask(1L);
         });
 
         assertEquals("Task not found with id: " + 1L, exception.getMessage());
@@ -94,7 +94,7 @@ public class TaskServiceTest {
         when(jpaTaskRepository.findById(1L)).thenReturn(Optional.of(task));
         when(jpaTaskRepository.save(any(Task.class))).thenReturn(task);
 
-        TaskResponse response = taskService.update(1L, request);
+        Task response = taskService.update(1L, request);
 
         assertNotNull(response);
         assertEquals(1L, response.getId());
@@ -154,7 +154,7 @@ public class TaskServiceTest {
 
         when(jpaTaskRepository.findAll(pageable)).thenReturn(taskPage);
 
-        Page<TaskResponse> response = taskService.findAll(pageable);
+        Page<Task> response = taskService.findAll(pageable);
 
         assertNotNull(response);
         assertEquals(2, response.getContent().size());//Extract and count the list

@@ -20,28 +20,25 @@ public class TaskService {
         this.jpaTaskRepository = jpaTaskRepository;
     }
 
-    public TaskResponse create(TaskCreateRequest taskRequest){
+    public Task create(TaskCreateRequest taskRequest){
         Task task = TaskMapper.requestToTask(taskRequest);
         Task savedTask = jpaTaskRepository.save(task);
-        return TaskMapper.taskToResponse(savedTask);
+        return savedTask;
     }
 
-    private Task findTask(Long id){
+    public Task findTask(Long id){
         return jpaTaskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
     }
-    public TaskResponse find(Long id){
-        return TaskMapper.taskToResponse(findTask(id));
-    }
 
-    public Page<TaskResponse> findAll(Pageable pageable){
+    public Page<Task> findAll(Pageable pageable){
         Page<Task> taskPage = jpaTaskRepository.findAll(pageable);
-        return taskPage.map(TaskMapper::taskToResponse);
+        return taskPage;
     }
 
-    public TaskResponse update(Long id, TaskUpdateRequest request){
+    public Task update(Long id, TaskUpdateRequest request){
         Task task = TaskMapper.updateTaskFromRequest(findTask(id), request);
         Task save = jpaTaskRepository.save(task);
-        return TaskMapper.taskToResponse(save);
+        return save;
     }
 
     public void delete(Long id){
