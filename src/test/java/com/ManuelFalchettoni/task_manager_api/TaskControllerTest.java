@@ -113,4 +113,28 @@ public class TaskControllerTest {
                 .andExpect(jsonPath("$.state").value("IN_PROGRESS"));
     }
 
+    @Test
+    void put_ShouldThrowException_WhenInvalidId() throws Exception{
+        TaskUpdateRequest request = new TaskUpdateRequest("Title", "Description", TaskStatus.IN_PROGRESS);
+        Mockito.when(taskService.update(eq(1L),any(TaskUpdateRequest.class))).thenThrow(new TaskNotFoundException(1L));
+
+        mockMvc.perform(put("/api/tasks/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Task not found with id: "+ 1L));
+    }
+
+    @Test
+    void put_ShouldThrowException_WhenInvalidRequest() throws Exception{
+        TaskUpdateRequest request = new TaskUpdateRequest("Title", "De", TaskStatus.IN_PROGRESS);
+
+        mockMvc.perform(put("/api/tasks/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Validation failed"));
+    }
+
+
 }
