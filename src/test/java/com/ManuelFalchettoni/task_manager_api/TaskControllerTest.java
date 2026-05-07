@@ -9,6 +9,7 @@ import com.ManuelFalchettoni.task_manager_api.exception.task.TaskNotFoundExcepti
 import com.ManuelFalchettoni.task_manager_api.mapper.TaskMapper;
 import com.ManuelFalchettoni.task_manager_api.service.task.TaskService;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -19,8 +20,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import tools.jackson.databind.ObjectMapper;
 
+import java.util.Optional;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -107,7 +111,7 @@ public class TaskControllerTest {
 
         mockMvc.perform(put("/api/tasks/{id}", 1L)
                 .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().is(200))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Title"))
                 .andExpect(jsonPath("$.description").value("Description"))
                 .andExpect(jsonPath("$.state").value("IN_PROGRESS"));
@@ -118,7 +122,7 @@ public class TaskControllerTest {
         TaskUpdateRequest request = new TaskUpdateRequest("Title", "Description", TaskStatus.IN_PROGRESS);
         Mockito.when(taskService.update(eq(1L),any(TaskUpdateRequest.class))).thenThrow(new TaskNotFoundException(1L));
 
-        mockMvc.perform(put("/api/tasks/1")
+        mockMvc.perform(put("/api/tasks/{id}", 1L)
                 .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNotFound())
@@ -136,5 +140,21 @@ public class TaskControllerTest {
                 .andExpect(jsonPath("$.message").value("Validation failed"));
     }
 
+    //Delete
+    @Test
+    void delete_ShouldDeleteTask_WhenValidId() throws Exception{
+        mockMvc.perform(delete("/api/tasks/{id}", 1L)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void delete_ShouldThrowException_WhenInvalidId() throws Exception{
+        doThrow(new TaskNotFoundException(1L)).when(taskService).delete(1L); //doThrow for methods void
+        mockMvc.perform(delete("/api/tasks/{id}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Task not found with id: "+ 1L));
+    }
 
 }
